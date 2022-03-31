@@ -13,7 +13,7 @@ namespace FileStatisticsUnitTests
         public async Task FileNameIsEmptyOrNull(string fileName)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
-            var fileAnalyzer = factory.GetAnalizer(fileName);
+            var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze();            
 
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.ErrorFileNameIsEmptyOrNull, stat.AnalysisResult);
@@ -26,7 +26,7 @@ namespace FileStatisticsUnitTests
         public async Task FileNotFoundTest(string fileName)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
-            var fileAnalyzer = factory.GetAnalizer(fileName);
+            var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze();   
             
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.ErrorFileNotFound, stat.AnalysisResult);
@@ -37,7 +37,7 @@ namespace FileStatisticsUnitTests
         public async Task SampleTestSuccess(string fileName)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
-            var fileAnalyzer = factory.GetAnalizer(fileName);
+            var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);
@@ -56,7 +56,7 @@ namespace FileStatisticsUnitTests
         public async Task WordCountTest(string fileName, int wordCount)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
-            var fileAnalyzer = factory.GetAnalizer(fileName);
+            var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);

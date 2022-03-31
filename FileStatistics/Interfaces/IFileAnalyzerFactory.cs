@@ -2,5 +2,5 @@
 
 public interface IFileAnalyzerFactory
 {
-    IFileAnalyzer GetAnalizer(string fileName);
+    IFileAnalyzer GetAnalyzer(string fileName);
 }

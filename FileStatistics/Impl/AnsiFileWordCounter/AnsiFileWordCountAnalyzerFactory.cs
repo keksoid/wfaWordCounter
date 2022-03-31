@@ -4,7 +4,7 @@ namespace FileStatistics.Impl.AnsiFileWordCounter;
 
 public class AnsiFileWordCountAnalyzerFactory : IFileAnalyzerFactory
 {
-    public IFileAnalyzer GetAnalizer(string fileName)
+    public IFileAnalyzer GetAnalyzer(string fileName)
     {
         return new AnsiFileWordCountAnalyzer(fileName);
     }
