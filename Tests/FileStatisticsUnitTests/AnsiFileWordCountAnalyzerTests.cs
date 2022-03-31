@@ -33,35 +33,35 @@ namespace FileStatisticsUnitTests
         }
 
         [Theory]
-        [InlineData(@"Resources\Sample.txt")]       
-        public async Task SampleTestSuccess(string fileName)
+        [InlineData(@"Resources\Sample.txt", "filii", 6)]       
+        [InlineData(@"Resources\Sample.txt", "Gomer", 2)]       
+        [InlineData(@"Resources\Sample.txt", "1:7", 1)]       
+        [InlineData(@"Resources\Sample.txt", "autem", 3)]       
+        [InlineData(@"Resources\Sample.txt", "et", 24)]       
+        public async Task WordCountStatisticsTestSuccess(string fileName, string word, int expectedWordCount)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);
-            Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat.AnalysisResult);            
-            Assert.Equal(6, stat["filii"]);
-            Assert.Equal(2, stat["Gomer"]);
-            Assert.Equal(1, stat["1:7"]);
-            Assert.Equal(3, stat["autem"]);
-            Assert.Equal(24, stat["et"]);
+            Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat?.AnalysisResult);            
+            Assert.Equal(expectedWordCount, stat?[word]);            
         }
         
         [Theory]
         [InlineData(@"Resources\Sample.txt", 91)]        
         [InlineData(@"Resources\Sample2.txt", 21)]        
         [InlineData(@"Resources\Sample3.txt", 70)]        
-        public async Task WordCountTest(string fileName, int wordCount)
+        public async Task AllWordCountTest(string fileName, int expectedWordCount)
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
             var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);
-            Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat.AnalysisResult);            
-            Assert.Equal(wordCount, stat.Count);
+            Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat?.AnalysisResult);            
+            Assert.Equal(expectedWordCount, stat?.Count);
         }
     }
 }
