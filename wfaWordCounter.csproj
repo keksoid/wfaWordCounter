@@ -8,4 +8,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="FileStatistics\**" />
+    <EmbeddedResource Remove="FileStatistics\**" />
+    <None Remove="FileStatistics\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="FileStatistics\FileStatistics.csproj" />
+  </ItemGroup>
+
 </Project>
