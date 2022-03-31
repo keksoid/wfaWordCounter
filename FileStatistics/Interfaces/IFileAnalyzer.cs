@@ -2,5 +2,5 @@
 
 public interface IFileAnalyzer
 {
-    Task<IFileStatistics> Analize();
+    Task<IFileStatistics> Analyze();
 }

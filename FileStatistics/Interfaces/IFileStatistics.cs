@@ -2,5 +2,7 @@
 
 public interface IFileStatistics
 {
+    AnalysisResult AnalysisResult { get; }
+
     string GetSummary();
 }

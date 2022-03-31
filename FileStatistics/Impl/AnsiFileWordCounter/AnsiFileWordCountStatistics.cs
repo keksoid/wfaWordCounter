@@ -12,6 +12,10 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
         #endregion
 
         #region Public members
+        public AnsiFileWordCountStatistics():base()
+        {
+            this.Summary.Append("This is just a summary string");
+        }             
 
         #region IAnsiFileWordCountStatistics
 
