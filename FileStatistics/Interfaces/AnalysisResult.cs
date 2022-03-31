@@ -10,6 +10,7 @@ namespace FileStatistics.Interfaces
     {
         Complete,
         Canceled,
-        Error
+        ErrorFileNotFound,
+        ErrorFileNameIsEmptyOrNull
     }
 }

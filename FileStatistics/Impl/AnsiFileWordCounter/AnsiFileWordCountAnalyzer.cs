@@ -18,13 +18,13 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
             if (string.IsNullOrEmpty(_fileName))
             {
                 stats.Summary.Append("File name is not provided!");
-                stats.AnalysisResult = AnalysisResult.Error;
+                stats.AnalysisResult = AnalysisResult.ErrorFileNameIsEmptyOrNull;
                 return stats;
             }
 
             if(!File.Exists(_fileName))
             {
-                stats.AnalysisResult = AnalysisResult.Error;
+                stats.AnalysisResult = AnalysisResult.ErrorFileNotFound;
                 stats.Summary.Append($"File {_fileName} doesn't exists!");
                 return stats;
             }
