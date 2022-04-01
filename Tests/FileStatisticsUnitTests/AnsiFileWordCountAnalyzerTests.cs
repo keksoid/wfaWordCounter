@@ -7,6 +7,21 @@ namespace FileStatisticsUnitTests
 {
     public class AnsiFileWordCountAnalyzerTests
     {
+        [Fact]        
+        public void AnsiFileWordCountAnalyzerFactoryAlwaysNotNullWhenCreated()
+        {
+            var factory = new AnsiFileWordCountAnalyzerFactory();
+            Assert.NotNull(factory);
+        }
+
+        [Fact]        
+        public void AnsiFileWordCountAnalyzerAlwaysNotNullWhenCreated()
+        {
+            var factory = new AnsiFileWordCountAnalyzerFactory();
+            var fileAnalyzer = factory.GetAnalyzer(string.Empty);
+            Assert.NotNull(fileAnalyzer);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData(null)]        
