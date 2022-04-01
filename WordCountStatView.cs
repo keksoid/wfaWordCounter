@@ -34,8 +34,16 @@ namespace wfaWordCounter
             InitializeComponent();
         }
         
+        private void EnableCommands(bool enable)
+        {
+            msiAnalyzeFile.Enabled = enable;
+            msiExitApp.Enabled = enable;
+        }
+
         private async void msiAnalyzeFile_Click(object sender, EventArgs e)
         {
+            EnableCommands(false);
+
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
             if(string.IsNullOrEmpty(openFileDialog.FileName)||(!File.Exists(openFileDialog.FileName)))
@@ -62,6 +70,8 @@ namespace wfaWordCounter
             _viewItemsCache.Sort(CompareWordStats);
 
             lvWordCount.VirtualListSize = _viewItemsCache.Count;
+
+            EnableCommands(true);
         }
 
         private void lvWordCount_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -81,6 +91,11 @@ namespace wfaWordCounter
 
             _viewItemsCache.Sort(CompareWordStats);
             lvWordCount.Refresh();
+        }
+
+        private void msiExitApp_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

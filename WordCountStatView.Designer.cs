@@ -32,12 +32,12 @@
             this.lvWordCount = new System.Windows.Forms.ListView();
             this.colWord = new System.Windows.Forms.ColumnHeader();
             this.colWordCount = new System.Windows.Forms.ColumnHeader();
+            this.lblAllWordCount = new System.Windows.Forms.Label();
             this.msMainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msiAnalyzeFile = new System.Windows.Forms.ToolStripMenuItem();
             this.msiExitApp = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.lblAllWordCount = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.msMainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -85,6 +85,17 @@
             this.colWordCount.Text = "Occurrence";
             this.colWordCount.Width = 640;
             // 
+            // lblAllWordCount
+            // 
+            this.lblAllWordCount.AutoSize = true;
+            this.lblAllWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAllWordCount.Location = new System.Drawing.Point(3, 340);
+            this.lblAllWordCount.Name = "lblAllWordCount";
+            this.lblAllWordCount.Size = new System.Drawing.Size(223, 23);
+            this.lblAllWordCount.TabIndex = 2;
+            this.lblAllWordCount.Text = "All word count:";
+            this.lblAllWordCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // msMainMenu
             // 
             this.msMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -118,6 +129,7 @@
             this.msiExitApp.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.msiExitApp.Size = new System.Drawing.Size(230, 22);
             this.msiExitApp.Text = "Exit";
+            this.msiExitApp.Click += new System.EventHandler(this.msiExitApp_Click);
             // 
             // openFileDialog
             // 
@@ -125,17 +137,6 @@
             this.openFileDialog.InitialDirectory = "C:\\";
             this.openFileDialog.RestoreDirectory = true;
             this.openFileDialog.ShowReadOnly = true;
-            // 
-            // lblAllWordCount
-            // 
-            this.lblAllWordCount.AutoSize = true;
-            this.lblAllWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAllWordCount.Location = new System.Drawing.Point(3, 340);
-            this.lblAllWordCount.Name = "lblAllWordCount";
-            this.lblAllWordCount.Size = new System.Drawing.Size(223, 23);
-            this.lblAllWordCount.TabIndex = 2;
-            this.lblAllWordCount.Text = "All word count:";
-            this.lblAllWordCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // WordCountStatView
             // 
