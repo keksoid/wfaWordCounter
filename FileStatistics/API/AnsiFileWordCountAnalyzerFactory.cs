@@ -1,6 +1,7 @@
-﻿using FileStatistics.Interfaces;
+﻿using FileStatistics.Impl.AnsiFileWordCounter;
+using FileStatistics.Interfaces;
 
-namespace FileStatistics.Impl.AnsiFileWordCounter;
+namespace FileStatistics.API;
 
 public class AnsiFileWordCountAnalyzerFactory : IFileAnalyzerFactory
 {

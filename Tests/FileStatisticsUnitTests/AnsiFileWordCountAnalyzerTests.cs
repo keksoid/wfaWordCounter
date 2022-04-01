@@ -1,4 +1,4 @@
-using FileStatistics.Impl.AnsiFileWordCounter;
+using FileStatistics.API;
 using FileStatistics.Interfaces.AnsiFileWordCounter;
 using System.Threading.Tasks;
 using Xunit;
