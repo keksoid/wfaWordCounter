@@ -29,7 +29,7 @@ namespace FileStatisticsUnitTests
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
-            var stat = await fileAnalyzer.Analyze();            
+            var stat = await fileAnalyzer.AnalyzeAsync();            
 
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.ErrorFileNameIsEmptyOrNull, stat.AnalysisResult);
         }
@@ -42,7 +42,7 @@ namespace FileStatisticsUnitTests
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
-            var stat = await fileAnalyzer.Analyze();   
+            var stat = await fileAnalyzer.AnalyzeAsync();   
             
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.ErrorFileNotFound, stat.AnalysisResult);
         }
@@ -57,7 +57,7 @@ namespace FileStatisticsUnitTests
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
-            var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
+            var stat = await fileAnalyzer.AnalyzeAsync() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat?.AnalysisResult);            
@@ -72,7 +72,7 @@ namespace FileStatisticsUnitTests
         {
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(fileName);
-            var stat = await fileAnalyzer.Analyze() as IAnsiFileWordCountStatistics;
+            var stat = await fileAnalyzer.AnalyzeAsync() as IAnsiFileWordCountStatistics;
 
             Assert.True(stat != null);
             Assert.Equal(FileStatistics.Interfaces.AnalysisResult.Complete, stat?.AnalysisResult);            

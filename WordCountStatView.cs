@@ -52,7 +52,7 @@ namespace wfaWordCounter
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
             
-            if (await fileAnalyzer.Analyze() is not IAnsiFileWordCountStatistics stat)
+            if (await fileAnalyzer.AnalyzeAsync() is not IAnsiFileWordCountStatistics stat)
                 return;
 
             _viewItemsCache.Clear();

@@ -75,11 +75,11 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
             _wordBuilder = new();
         }
 
-        public override async Task<IFileStatistics> Analyze()
+        public override async Task<IFileStatistics> AnalyzeAsync()
         {            
             _wordBuilder.Clear();
             
-            await base.Analyze();
+            await base.AnalyzeAsync();
 
             //build the last word in file
             var curWord = _wordBuilder.ToString();

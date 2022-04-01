@@ -18,7 +18,7 @@ namespace FileStatistics.Impl
     {
         #region Protected members
         /// <summary>
-        /// Allows successor to control flow of file analysis
+        /// Allows successor to control the flow of file analysis
         /// </summary>
         protected enum ByteProcessingResult
         {
@@ -37,6 +37,11 @@ namespace FileStatistics.Impl
         /// <returns>IFileStatistics implementator that will be returned from Analyze() method</returns>        
         protected abstract IFileStatistics GetFileStatistics();
 
+        /// <summary>
+        /// Processing of each read byte
+        /// </summary>
+        /// <param name="readByte">Current byte</param>
+        /// <returns>Decision to next action</returns>
         protected abstract ByteProcessingResult OnProcessNextByte(byte readByte);
 
         #endregion
@@ -52,7 +57,7 @@ namespace FileStatistics.Impl
         /// </summary>
         /// <returns>Result of analyzis</returns>
         /// <exception cref="ArgumentNullException">If CreateFileStatistics() doen't return FileStatistics successor</exception>
-        public virtual async Task<IFileStatistics> Analyze()
+        public virtual async Task<IFileStatistics> AnalyzeAsync()
         {
             //Analyze method should always return a value
             if (GetFileStatistics() is not FileStatistics stats)

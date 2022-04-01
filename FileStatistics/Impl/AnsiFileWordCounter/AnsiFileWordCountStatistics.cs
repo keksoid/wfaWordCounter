@@ -3,21 +3,30 @@ using FileStatistics.Interfaces.AnsiFileWordCounter;
 
 namespace FileStatistics.Impl.AnsiFileWordCounter
 {
+    /// <summary>
+    /// Statistics class for word counter in ansi encoded files
+    /// </summary>
     internal class AnsiFileWordCountStatistics : FileStatistics, IAnsiFileWordCountStatistics
     {
         #region Private members
-
-        private readonly IDictionary<string, int> _words = new Dictionary<string, int>();
+        /// <summary>
+        /// Container for words statitics
+        /// </summary>
+        /// <remarks>
+        /// Key : word
+        /// Value : word occurence in file
+        /// </remarks>
+        private readonly Dictionary<string, int> _words = new ();
 
         #endregion
 
         #region Public members
         public AnsiFileWordCountStatistics():base()
         {
-            this.Summary.Append("This is just a summary string");
+            
         }             
 
-        #region IAnsiFileWordCountStatistics
+        #region IAnsiFileWordCountStatistics implementation
 
         public IEnumerable<string> Words => _words.Keys;
 
@@ -30,7 +39,7 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
                     return resValue;
                 }
                 else
-                {
+                { //if word doesn't exists in collection - valid value 0, no exception
                     return 0;
                 }
             }
