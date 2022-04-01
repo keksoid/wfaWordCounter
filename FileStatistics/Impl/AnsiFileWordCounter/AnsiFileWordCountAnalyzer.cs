@@ -29,7 +29,7 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
                 return stats;
             }
 
-            using var sourceStream =
+            await using var sourceStream =
                 new FileStream(
                     _fileName,
                     FileMode.Open, FileAccess.Read, FileShare.Read,
@@ -42,10 +42,11 @@ namespace FileStatistics.Impl.AnsiFileWordCounter
             int numRead;
             
             while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
-            {                
+            {
                 for(int i = 0; i<numRead; i++)
                 {
                     var symb = (char)buffer[i];
+
 
                     if(char.IsWhiteSpace(symb) || char.IsSeparator(symb) || (char.IsPunctuation(symb)&&(symb!=':')))
                     {
