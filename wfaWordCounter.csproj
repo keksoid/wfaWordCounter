@@ -10,8 +10,14 @@
 
   <ItemGroup>
     <Compile Remove="FileStatistics\**" />
+    <Compile Remove="TestResults\**" />
+    <Compile Remove="Tests\**" />
     <EmbeddedResource Remove="FileStatistics\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <EmbeddedResource Remove="Tests\**" />
     <None Remove="FileStatistics\**" />
+    <None Remove="TestResults\**" />
+    <None Remove="Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
