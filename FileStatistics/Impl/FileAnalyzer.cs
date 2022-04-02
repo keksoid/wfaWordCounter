@@ -57,11 +57,11 @@ namespace FileStatistics.Impl
         /// </summary>
         /// <returns>Result of analyzis</returns>
         /// <exception cref="ArgumentNullException">If CreateFileStatistics() doen't return FileStatistics successor</exception>
-        public virtual async Task<IFileStatistics> AnalyzeAsync()
+        public virtual async Task<IFileStatistics> AnalyzeAsync(CancellationToken cancellation = default)
         {
             //Analyze method should always return a value
             if (GetFileStatistics() is not FileStatistics stats)
-                throw new ArgumentNullException("Method CreateFileStatistics must return FileStatistics successor!");
+                throw new MissingMethodException("Method CreateFileStatistics must return FileStatistics successor!");
 
             if (string.IsNullOrEmpty(FullFilePath))
             {
@@ -88,14 +88,18 @@ namespace FileStatistics.Impl
             byte[] buffer = new byte[0x1000];
             int numRead;
             //async reading portion of bytes from file
-            while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
+            while ((numRead = await sourceStream.ReadAsync(buffer, cancellation)) != 0)
             {                
+                cancellation.ThrowIfCancellationRequested();
+
                 //process each read byte 
                 for (int i = 0; i < numRead; i++)
                 {
                     //successor can stop the analysis
                     if (OnProcessNextByte(buffer[i]) == ByteProcessingResult.Stop)
                         return stats;
+
+                    cancellation.ThrowIfCancellationRequested();
                 }
             }            
 

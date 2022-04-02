@@ -9,6 +9,7 @@ namespace wfaWordCounter
 
         private int _sortColIdx = 1;
         private SortOrder _sortDir = SortOrder.Descending;
+        private CancellationTokenSource? _ctsStopAnalisys;
 
         private int CompareWordStats(ListViewItem left, ListViewItem right)
         {
@@ -34,15 +35,20 @@ namespace wfaWordCounter
             InitializeComponent();
         }
         
-        private void EnableCommands(bool enable)
+        private void UpdateControls(bool analysisInProgress)
         {
-            msiAnalyzeFile.Enabled = enable;
-            msiExitApp.Enabled = enable;
+            msiAnalyzeFile.Enabled = !analysisInProgress;
+            msiExitApp.Enabled = !analysisInProgress;
+
+            pbAnaysis.Visible = analysisInProgress;
+            pbAnaysis.Enabled = analysisInProgress;
+            btnCancelAnalysis.Visible = analysisInProgress;
+            btnCancelAnalysis.Enabled = analysisInProgress;
         }
 
         private async void msiAnalyzeFile_Click(object sender, EventArgs e)
         {
-            EnableCommands(false);
+            UpdateControls(true);
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -51,27 +57,41 @@ namespace wfaWordCounter
 
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
-            
-            if (await fileAnalyzer.AnalyzeAsync() is not IAnsiFileWordCountStatistics stat)
-                return;
+            _ctsStopAnalisys = new CancellationTokenSource();
+            try
+            {
+                if (await fileAnalyzer.AnalyzeAsync(_ctsStopAnalisys.Token) is not IAnsiFileWordCountStatistics stat)
+                    return;            
 
-            _viewItemsCache.Clear();
-            lvWordCount.VirtualListSize = 0;
+                _viewItemsCache.Clear();
+                _viewItemsCache.Capacity = stat.Count;
+                lvWordCount.VirtualListSize = 0;
 
-            lblAllWordCount.Text = $"All word Count: {stat.Count}";
-            stat.Words.ToList().ForEach(
-                word =>
-                {
-                    var lvItem = new ListViewItem(word);
-                    lvItem.SubItems.Add(stat[word].ToString());
-                    _viewItemsCache.Add(lvItem);
-                });
+                lblAllWordCount.Text = $"All word Count: {stat.Count}";
+                stat.Words.ToList().ForEach(
+                    word =>
+                    {
+                        var lvItem = new ListViewItem(word);
+                        lvItem.SubItems.Add(stat[word].ToString());
+                        _viewItemsCache.Add(lvItem);
+                    });
 
-            _viewItemsCache.Sort(CompareWordStats);
+                _viewItemsCache.Sort(CompareWordStats);
 
-            lvWordCount.VirtualListSize = _viewItemsCache.Count;
+                lvWordCount.VirtualListSize = _viewItemsCache.Count;
+                lvWordCount.Refresh();
+            }
+            catch (OperationCanceledException)
+            {
+                lblAllWordCount.Text = "Analysis was canceled";
+            }
+            finally
+            {
+                _ctsStopAnalisys.Dispose();
+                _ctsStopAnalisys = null;
 
-            EnableCommands(true);
+                UpdateControls(false);
+            }
         }
 
         private void lvWordCount_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -96,6 +116,11 @@ namespace wfaWordCounter
         private void msiExitApp_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void btnCancelAnalysis_Click(object sender, EventArgs e)
+        {
+            _ctsStopAnalisys?.Cancel();
         }
     }
 }

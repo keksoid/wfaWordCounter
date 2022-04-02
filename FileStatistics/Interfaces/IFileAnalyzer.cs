@@ -8,7 +8,8 @@ public interface IFileAnalyzer
     /// <summary>
     /// Analyze file asyncronously
     /// </summary>
+    /// <param name="cancellation">Cancellation token to cancel analisys</param>
     /// <remarks>File provided by a special factory of specified FileAnalyzer</remarks>
     /// <returns>task of analysis that can be awaited</returns>
-    Task<IFileStatistics> AnalyzeAsync();
+    Task<IFileStatistics> AnalyzeAsync(CancellationToken cancellation = default);
 }
