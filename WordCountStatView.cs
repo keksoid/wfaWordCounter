@@ -6,26 +6,46 @@ namespace wfaWordCounter
 {
     public partial class WordCountStatView : Form
     {
+        #region Private methods
+        
         private readonly List<ListViewItem> _viewItemsCache = new();
 
+        /// <summary>
+        /// Current sort column index
+        /// </summary>
         private int _sortColIdx = 1;
-        private SortOrder _sortDir = SortOrder.Descending;
-        private CancellationTokenSource? _ctsStopAnalisys;
 
-        private int CompareWordStats(ListViewItem left, ListViewItem right)
+        /// <summary>
+        /// Current sort direction
+        /// </summary>        
+        private SortOrder _sortDir = SortOrder.Descending;
+
+        /// <summary>
+        /// Token source to cancel current task
+        /// </summary>
+        private CancellationTokenSource? _ctsStopCurrentTask;
+
+        /// <summary>
+        /// Ordering call back for list view item with words statistics in it
+        /// </summary>
+        /// <remarks>Ordering process depends on current values of _sortColIdx and _sortDir</remarks>
+        /// <param name="leftWord">Left word to compare</param>
+        /// <param name="rightWord">Right word to compare</param>
+        /// <returns></returns>
+        private int CompareWordStats(ListViewItem leftWord, ListViewItem rightWord)
         {
             switch (_sortColIdx)
             {
                 case 0: 
                     if(_sortDir == SortOrder.Ascending)
-                        return string.Compare(left.Text, right.Text, StringComparison.CurrentCulture);
+                        return string.Compare(leftWord.Text, rightWord.Text, StringComparison.CurrentCulture);
                     else
-                        return string.Compare(right.Text, left.Text, StringComparison.CurrentCulture);
+                        return string.Compare(rightWord.Text, leftWord.Text, StringComparison.CurrentCulture);
                 case 1:
                     if (_sortDir == SortOrder.Ascending)
-                        return int.Parse(left.SubItems[1].Text) - int.Parse(right.SubItems[1].Text);
+                        return int.Parse(leftWord.SubItems[1].Text) - int.Parse(rightWord.SubItems[1].Text);
                     else
-                        return int.Parse(right.SubItems[1].Text) - int.Parse(left.SubItems[1].Text);
+                        return int.Parse(rightWord.SubItems[1].Text) - int.Parse(leftWord.SubItems[1].Text);
                 default: 
                     return 0;
             }
@@ -59,6 +79,41 @@ namespace wfaWordCounter
                 pbAnaysis.PerformStep();
         }
 
+        /// <summary>
+        /// Fill lvWordCount with provided statistics
+        /// </summary>
+        /// <param name="stat">Statistics from analyzed file</param>
+        private void FillLVWord(IAnsiFileWordCountStatistics stat)
+        {
+            _viewItemsCache.Clear();
+            _viewItemsCache.Capacity = stat.Count;
+
+            lvWordCount.BeginUpdate();
+            try
+            {
+                //clear current data
+                lvWordCount.VirtualListSize = 0;
+
+                foreach(var word in stat.Words)
+                {
+                    var lvItem = new ListViewItem(word);
+                    lvItem.SubItems.Add(stat[word].ToString());
+                    _viewItemsCache.Add(lvItem);
+                }
+
+                _viewItemsCache.Sort(CompareWordStats);
+
+                lvWordCount.VirtualListSize = _viewItemsCache.Count;
+            }
+            finally
+            {
+                lvWordCount.EndUpdate();
+            }
+            lvWordCount.Refresh();
+        }
+
+        #region Processing UI Controls callbacks
+        
         private async void msiAnalyzeFile_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog() != DialogResult.OK)
@@ -70,29 +125,15 @@ namespace wfaWordCounter
 
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
-            _ctsStopAnalisys = new CancellationTokenSource();
+            _ctsStopCurrentTask = new CancellationTokenSource();
             try
             {
-                if (await fileAnalyzer.AnalyzeAsync(_ctsStopAnalisys.Token, new Progress<AnalysisStatus>(OnAnalisysProgress)) is not IAnsiFileWordCountStatistics stat)
-                    return;            
+                if (await fileAnalyzer.AnalyzeAsync(_ctsStopCurrentTask.Token, new Progress<AnalysisStatus>(OnAnalisysProgress)) is not IAnsiFileWordCountStatistics stat)
+                    return;
 
-                _viewItemsCache.Clear();
-                _viewItemsCache.Capacity = stat.Count;
-                lvWordCount.VirtualListSize = 0;
-
-                lblAllWordCount.Text = $"All word Count: {stat.Count}";
-                stat.Words.ToList().ForEach(
-                    word =>
-                    {
-                        var lvItem = new ListViewItem(word);
-                        lvItem.SubItems.Add(stat[word].ToString());
-                        _viewItemsCache.Add(lvItem);
-                    });
-
-                _viewItemsCache.Sort(CompareWordStats);
-
-                lvWordCount.VirtualListSize = _viewItemsCache.Count;
-                lvWordCount.Refresh();
+                FillLVWord(stat);
+                
+                lblAllWordCount.Text = $"All word Count: {stat.Count}";                
             }
             catch (OperationCanceledException)
             {
@@ -100,8 +141,8 @@ namespace wfaWordCounter
             }
             finally
             {
-                _ctsStopAnalisys.Dispose();
-                _ctsStopAnalisys = null;
+                _ctsStopCurrentTask.Dispose();
+                _ctsStopCurrentTask = null;
                 
                 UpdateControls(false);
             }
@@ -133,12 +174,30 @@ namespace wfaWordCounter
 
         private void btnCancelAnalysis_Click(object sender, EventArgs e)
         {
-            _ctsStopAnalisys?.Cancel();
+            _ctsStopCurrentTask?.Cancel();
         }
+
+        private void WordCountStatView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_ctsStopCurrentTask != null)
+            {
+                if (MessageBox.Show("Do you want to stop current analysis and exit application?", "WorkCounter", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    _ctsStopCurrentTask.Cancel();
+                }
+                else
+                    e.Cancel = true;
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Public methods
 
         public WordCountStatView()
         {
             InitializeComponent();
         }
+        #endregion
     }
 }

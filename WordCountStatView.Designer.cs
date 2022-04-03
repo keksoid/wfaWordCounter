@@ -33,13 +33,13 @@
             this.colWord = new System.Windows.Forms.ColumnHeader();
             this.colWordCount = new System.Windows.Forms.ColumnHeader();
             this.lblAllWordCount = new System.Windows.Forms.Label();
+            this.pbAnaysis = new System.Windows.Forms.ProgressBar();
+            this.btnCancelAnalysis = new System.Windows.Forms.Button();
             this.msMainMenu = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msiAnalyzeFile = new System.Windows.Forms.ToolStripMenuItem();
             this.msiExitApp = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.pbAnaysis = new System.Windows.Forms.ProgressBar();
-            this.btnCancelAnalysis = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.msMainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -101,6 +101,27 @@
             this.lblAllWordCount.Text = "All word count:";
             this.lblAllWordCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // pbAnaysis
+            // 
+            this.pbAnaysis.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbAnaysis.Location = new System.Drawing.Point(153, 335);
+            this.pbAnaysis.Name = "pbAnaysis";
+            this.pbAnaysis.Size = new System.Drawing.Size(428, 24);
+            this.pbAnaysis.TabIndex = 3;
+            this.pbAnaysis.Visible = false;
+            // 
+            // btnCancelAnalysis
+            // 
+            this.btnCancelAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnCancelAnalysis.Location = new System.Drawing.Point(587, 335);
+            this.btnCancelAnalysis.Name = "btnCancelAnalysis";
+            this.btnCancelAnalysis.Size = new System.Drawing.Size(114, 24);
+            this.btnCancelAnalysis.TabIndex = 4;
+            this.btnCancelAnalysis.Text = "&Cancel";
+            this.btnCancelAnalysis.UseVisualStyleBackColor = true;
+            this.btnCancelAnalysis.Visible = false;
+            this.btnCancelAnalysis.Click += new System.EventHandler(this.btnCancelAnalysis_Click);
+            // 
             // msMainMenu
             // 
             this.msMainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -143,27 +164,6 @@
             this.openFileDialog.RestoreDirectory = true;
             this.openFileDialog.ShowReadOnly = true;
             // 
-            // pbAnaysis
-            // 
-            this.pbAnaysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbAnaysis.Location = new System.Drawing.Point(153, 335);
-            this.pbAnaysis.Name = "pbAnaysis";
-            this.pbAnaysis.Size = new System.Drawing.Size(428, 24);
-            this.pbAnaysis.TabIndex = 3;
-            this.pbAnaysis.Visible = false;
-            // 
-            // btnCancelAnalysis
-            // 
-            this.btnCancelAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCancelAnalysis.Location = new System.Drawing.Point(587, 335);
-            this.btnCancelAnalysis.Name = "btnCancelAnalysis";
-            this.btnCancelAnalysis.Size = new System.Drawing.Size(114, 24);
-            this.btnCancelAnalysis.TabIndex = 4;
-            this.btnCancelAnalysis.Text = "Cancel";
-            this.btnCancelAnalysis.UseVisualStyleBackColor = true;
-            this.btnCancelAnalysis.Visible = false;
-            this.btnCancelAnalysis.Click += new System.EventHandler(this.btnCancelAnalysis_Click);
-            // 
             // WordCountStatView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -174,6 +174,7 @@
             this.MainMenuStrip = this.msMainMenu;
             this.Name = "WordCountStatView";
             this.Text = "WordCounter";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WordCountStatView_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.msMainMenu.ResumeLayout(false);
