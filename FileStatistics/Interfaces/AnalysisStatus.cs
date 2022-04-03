@@ -35,5 +35,10 @@ namespace FileStatistics.Interfaces
         /// All step count
         /// </summary>
         public readonly int StepsCount = 100;
+
+        /// <summary>
+        /// Full path to a file being analyzed
+        /// </summary>
+        public string FullFilePath { get; set; } = String.Empty;
     }
 }

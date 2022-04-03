@@ -100,7 +100,8 @@ namespace wfaWordCounter
             msiExitApp.Enabled = !analysisInProgress;
 
             //make progress bar and cancel analysis button visible if analisys in progress 
-            pbAnaysis.Visible = analysisInProgress;            
+            pbAnaysis.Visible = analysisInProgress;       
+            lblAnalysisInfo.Visible = analysisInProgress; 
 
             btnCancelAnalysis.Visible = analysisInProgress;
             btnCancelAnalysis.Enabled = analysisInProgress;
@@ -118,12 +119,15 @@ namespace wfaWordCounter
                 pbAnaysis.Minimum = 0;
                 pbAnaysis.Maximum = status.StepsCount;
                 pbAnaysis.Step = 1;
-                pbAnaysis.Value = 0;
-                pbAnaysis.Visible = true;
-                pbAnaysis.Enabled = true;
+                pbAnaysis.Value = 0;                
             }
             else
                 pbAnaysis.PerformStep();
+
+            //calc current processed statistics
+            var mbytesProcessed = (int)((status.CompleteStatus / 100.0) * status.FileSize) / 1000000;
+            var mbytes = status.FileSize / 1000000;
+            lblAnalysisInfo.Text = $"{Path.GetFileName(status.FullFilePath)}: {mbytesProcessed}/{mbytes} MBytes";
         }
 
         /// <summary>
@@ -176,7 +180,7 @@ namespace wfaWordCounter
             if(string.IsNullOrEmpty(openFileDialog.FileName)||(!File.Exists(openFileDialog.FileName)))
                 return;
 
-            var fullFilePath = openFileDialog.FileName;
+            var fullFilePath = openFileDialog.FileName;          
 
             UpdateControls(true);
             

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblAnalysisInfo = new System.Windows.Forms.Label();
             this.lvWordCount = new System.Windows.Forms.ListView();
             this.colWord = new System.Windows.Forms.ColumnHeader();
             this.colWordCount = new System.Windows.Forms.ColumnHeader();
@@ -50,18 +51,33 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
+            this.tableLayoutPanel1.Controls.Add(this.lblAnalysisInfo, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.lvWordCount, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.lblAllWordCount, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.pbAnaysis, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.pbAnaysis, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.btnCancelAnalysis, 2, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(434, 538);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 15F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(610, 538);
             this.tableLayoutPanel1.TabIndex = 2;
+            // 
+            // lblAnalysisInfo
+            // 
+            this.lblAnalysisInfo.AutoSize = true;
+            this.lblAnalysisInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAnalysisInfo.Location = new System.Drawing.Point(153, 508);
+            this.lblAnalysisInfo.Name = "lblAnalysisInfo";
+            this.lblAnalysisInfo.Size = new System.Drawing.Size(334, 15);
+            this.lblAnalysisInfo.TabIndex = 5;
+            this.lblAnalysisInfo.Text = "Current file analisys";
+            this.lblAnalysisInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblAnalysisInfo.Visible = false;
             // 
             // lvWordCount
             // 
@@ -70,9 +86,10 @@
             this.colWordCount});
             this.tableLayoutPanel1.SetColumnSpan(this.lvWordCount, 3);
             this.lvWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvWordCount.FullRowSelect = true;
             this.lvWordCount.Location = new System.Drawing.Point(3, 3);
             this.lvWordCount.Name = "lvWordCount";
-            this.lvWordCount.Size = new System.Drawing.Size(428, 502);
+            this.lvWordCount.Size = new System.Drawing.Size(604, 502);
             this.lvWordCount.TabIndex = 0;
             this.lvWordCount.UseCompatibleStateImageBehavior = false;
             this.lvWordCount.View = System.Windows.Forms.View.Details;
@@ -96,6 +113,7 @@
             this.lblAllWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAllWordCount.Location = new System.Drawing.Point(3, 508);
             this.lblAllWordCount.Name = "lblAllWordCount";
+            this.tableLayoutPanel1.SetRowSpan(this.lblAllWordCount, 2);
             this.lblAllWordCount.Size = new System.Drawing.Size(144, 30);
             this.lblAllWordCount.TabIndex = 2;
             this.lblAllWordCount.Text = "All word count:";
@@ -104,17 +122,18 @@
             // pbAnaysis
             // 
             this.pbAnaysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbAnaysis.Location = new System.Drawing.Point(153, 511);
+            this.pbAnaysis.Location = new System.Drawing.Point(153, 526);
             this.pbAnaysis.Name = "pbAnaysis";
-            this.pbAnaysis.Size = new System.Drawing.Size(158, 24);
+            this.pbAnaysis.Size = new System.Drawing.Size(334, 9);
             this.pbAnaysis.TabIndex = 3;
             this.pbAnaysis.Visible = false;
             // 
             // btnCancelAnalysis
             // 
             this.btnCancelAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCancelAnalysis.Location = new System.Drawing.Point(317, 511);
+            this.btnCancelAnalysis.Location = new System.Drawing.Point(493, 511);
             this.btnCancelAnalysis.Name = "btnCancelAnalysis";
+            this.tableLayoutPanel1.SetRowSpan(this.btnCancelAnalysis, 2);
             this.btnCancelAnalysis.Size = new System.Drawing.Size(114, 24);
             this.btnCancelAnalysis.TabIndex = 4;
             this.btnCancelAnalysis.Text = "&Cancel";
@@ -128,7 +147,7 @@
             this.fileToolStripMenuItem});
             this.msMainMenu.Location = new System.Drawing.Point(0, 0);
             this.msMainMenu.Name = "msMainMenu";
-            this.msMainMenu.Size = new System.Drawing.Size(434, 24);
+            this.msMainMenu.Size = new System.Drawing.Size(610, 24);
             this.msMainMenu.TabIndex = 3;
             this.msMainMenu.Text = "menuStrip1";
             // 
@@ -168,7 +187,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(434, 562);
+            this.ClientSize = new System.Drawing.Size(610, 562);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.msMainMenu);
             this.MainMenuStrip = this.msMainMenu;
@@ -199,5 +218,6 @@
         private Label lblAllWordCount;
         private ProgressBar pbAnaysis;
         private Button btnCancelAnalysis;
+        private Label lblAnalysisInfo;
     }
 }

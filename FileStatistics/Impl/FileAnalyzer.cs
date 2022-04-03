@@ -29,7 +29,8 @@ namespace FileStatistics.Impl
                 //reporting start of analysis
                 FileSize = fileInfo.Length,
                 CompleteStatus = 0,                
-                CurrentBytesInStep = 0
+                CurrentBytesInStep = 0,
+                FullFilePath = fileInfo.FullName,
             };            
 
             progress?.Report(analisysStatus);
