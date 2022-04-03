@@ -1,4 +1,5 @@
 using FileStatistics.API;
+using FileStatistics.Interfaces;
 using FileStatistics.Interfaces.AnsiFileWordCounter;
 
 namespace wfaWordCounter
@@ -28,12 +29,7 @@ namespace wfaWordCounter
                 default: 
                     return 0;
             }
-        }
-
-        public WordCountStatView()
-        {
-            InitializeComponent();
-        }
+        }        
         
         private void UpdateControls(bool analysisInProgress)
         {
@@ -42,25 +38,42 @@ namespace wfaWordCounter
 
             pbAnaysis.Visible = analysisInProgress;
             pbAnaysis.Enabled = analysisInProgress;
+
             btnCancelAnalysis.Visible = analysisInProgress;
             btnCancelAnalysis.Enabled = analysisInProgress;
         }
 
+        private void OnAnalisysProgress(AnalysisStatus status)
+        {
+            //that mean's we need to setup progress bar
+            if (status.CompleteStatus == 0)
+            {
+                pbAnaysis.Minimum = 0;
+                pbAnaysis.Maximum = status.StepsCount;
+                pbAnaysis.Step = 1;
+                pbAnaysis.Value = 0;
+                pbAnaysis.Visible = true;
+                pbAnaysis.Enabled = true;
+            }
+            else
+                pbAnaysis.PerformStep();
+        }
+
         private async void msiAnalyzeFile_Click(object sender, EventArgs e)
         {
-            UpdateControls(true);
-
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
             if(string.IsNullOrEmpty(openFileDialog.FileName)||(!File.Exists(openFileDialog.FileName)))
                 return;
+
+            UpdateControls(true);
 
             var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
             _ctsStopAnalisys = new CancellationTokenSource();
             try
             {
-                if (await fileAnalyzer.AnalyzeAsync(_ctsStopAnalisys.Token) is not IAnsiFileWordCountStatistics stat)
+                if (await fileAnalyzer.AnalyzeAsync(_ctsStopAnalisys.Token, new Progress<AnalysisStatus>(OnAnalisysProgress)) is not IAnsiFileWordCountStatistics stat)
                     return;            
 
                 _viewItemsCache.Clear();
@@ -89,10 +102,10 @@ namespace wfaWordCounter
             {
                 _ctsStopAnalisys.Dispose();
                 _ctsStopAnalisys = null;
-
+                
                 UpdateControls(false);
             }
-        }
+        }        
 
         private void lvWordCount_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
@@ -121,6 +134,11 @@ namespace wfaWordCounter
         private void btnCancelAnalysis_Click(object sender, EventArgs e)
         {
             _ctsStopAnalisys?.Cancel();
+        }
+
+        public WordCountStatView()
+        {
+            InitializeComponent();
         }
     }
 }

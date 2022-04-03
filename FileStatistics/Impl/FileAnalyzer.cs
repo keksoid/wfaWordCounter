@@ -16,6 +16,45 @@ namespace FileStatistics.Impl
     /// </remarks>
     internal abstract class FileAnalyzer : IFileAnalyzer
     {
+        #region Private members
+        private AnalysisStatus? InitProgress(IProgress<AnalysisStatus>? progress = default)
+        {
+            if (progress == null)
+                return null;
+
+            var fileInfo = new FileInfo(FullFilePath);
+
+            var analisysStatus = new AnalysisStatus
+            {
+                //reporting start of analysis
+                FileSize = fileInfo.Length,
+                CompleteStatus = 0,                
+                CurrentBytesInStep = 0
+            };            
+
+            progress?.Report(analisysStatus);
+
+            return analisysStatus;
+        }
+
+        private void DoReportProgress(AnalysisStatus? analisysStatus, IProgress<AnalysisStatus>? progress = default)
+        {
+            if (analisysStatus == null)
+                return;
+
+            //every stepsize report progress
+            analisysStatus.CurrentBytesInStep += 1;
+
+            if (analisysStatus.CurrentBytesInStep == analisysStatus.StepSize)
+            {
+                analisysStatus.CompleteStatus += 1;
+                progress?.Report(analisysStatus);
+
+                analisysStatus.CurrentBytesInStep = 0;
+            }
+        }
+        #endregion
+
         #region Protected members
         /// <summary>
         /// Allows successor to control the flow of file analysis
@@ -55,9 +94,11 @@ namespace FileStatistics.Impl
         /// <summary>
         /// Base async implementation of file analization
         /// </summary>
+        /// <param name="cancellation">Token to cancel current analysis</param>
+        /// <param name="progress">Call back to report analysis progress to user</param>
         /// <returns>Result of analyzis</returns>
         /// <exception cref="ArgumentNullException">If CreateFileStatistics() doen't return FileStatistics successor</exception>
-        public virtual async Task<IFileStatistics> AnalyzeAsync(CancellationToken cancellation = default)
+        public virtual async Task<IFileStatistics> AnalyzeAsync(CancellationToken cancellation = default, IProgress<AnalysisStatus>? progress = default)
         {
             //Analyze method should always return a value
             if (GetFileStatistics() is not FileStatistics stats)
@@ -75,7 +116,9 @@ namespace FileStatistics.Impl
                 stats.AnalysisResult = AnalysisResult.ErrorFileNotFound;
                 stats.Summary.Append($"File {FullFilePath} doesn't exists!");
                 return stats;
-            }
+            }                        
+            
+            var analisysStatus = InitProgress(progress);  
 
             //open stream to file
             await using var sourceStream =
@@ -85,12 +128,13 @@ namespace FileStatistics.Impl
                     bufferSize: 4096, useAsync: true
                 );                        
 
-            byte[] buffer = new byte[0x1000];
-            int numRead;
+            var buffer = new byte[0x1000];
+            int numRead;            
+
             //async reading portion of bytes from file
             while ((numRead = await sourceStream.ReadAsync(buffer, cancellation)) != 0)
             {                
-                cancellation.ThrowIfCancellationRequested();
+                cancellation.ThrowIfCancellationRequested();                
 
                 //process each read byte 
                 for (int i = 0; i < numRead; i++)
@@ -100,11 +144,14 @@ namespace FileStatistics.Impl
                         return stats;
 
                     cancellation.ThrowIfCancellationRequested();
+
+                    //on every byte analyze report progress
+                    DoReportProgress(analisysStatus, progress);                    
                 }
             }            
 
             return stats;
-        }
+        }       
         #endregion
     }
 }
