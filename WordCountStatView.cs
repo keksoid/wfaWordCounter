@@ -240,20 +240,26 @@ namespace wfaWordCounter
 
         private void btnCancelAnalysis_Click(object sender, EventArgs e)
         {
-            _ctsStopCurrentTask?.Cancel();
+            if (_ctsStopCurrentTask == null)
+                return;
+
+            if (MessageBox.Show("Do you want to stop current analysis?", "WorkCounter", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                _ctsStopCurrentTask.Cancel();
+            }
         }
 
         private void WordCountStatView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_ctsStopCurrentTask != null)
+            if (_ctsStopCurrentTask == null)
+                return;
+
+            if (MessageBox.Show("Do you want to stop current analysis and exit application?", "WorkCounter", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                if (MessageBox.Show("Do you want to stop current analysis and exit application?", "WorkCounter", MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    _ctsStopCurrentTask.Cancel();
-                }
-                else
-                    e.Cancel = true;
+                _ctsStopCurrentTask.Cancel();
             }
+            else
+                e.Cancel = true;
         }
         #endregion
         #endregion
