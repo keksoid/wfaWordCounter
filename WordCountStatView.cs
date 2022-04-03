@@ -1,29 +1,58 @@
 using FileStatistics.API;
 using FileStatistics.Interfaces;
 using FileStatistics.Interfaces.AnsiFileWordCounter;
+using System.ComponentModel.Design;
 
 namespace wfaWordCounter
 {
     public partial class WordCountStatView : Form
     {
         #region Private methods
+        /// <summary>
+        /// Global services for analisys
+        /// </summary>
+        private readonly ServiceContainer _analysisServices = new();        
         
+        /// <summary>
+        /// Cache with listview items for list view with analysis data sorted by current sort settings
+        /// </summary>
         private readonly List<ListViewItem> _viewItemsCache = new();
 
         /// <summary>
+        /// Index of fixed column in lv with Word data
+        /// </summary>
+        private const int WordColIdx = 0;
+        
+        /// <summary>
+        /// Index of fixed column in lv with WordCount data
+        /// </summary>
+        private const int WordCountColIdx = 1;
+
+        #region Sort settings in listview       
+        /// <summary>
         /// Current sort column index
         /// </summary>
-        private int _sortColIdx = 1;
+        private int _sortColIdx = WordCountColIdx;
 
         /// <summary>
         /// Current sort direction
         /// </summary>        
         private SortOrder _sortDir = SortOrder.Descending;
+        #endregion
 
         /// <summary>
         /// Token source to cancel current task
         /// </summary>
         private CancellationTokenSource? _ctsStopCurrentTask;
+
+        /// <summary>
+        /// Initialize all global services
+        /// </summary>
+        private void InitServices()
+        {
+            //register AnsiFileWordCountAnalyzerFactory service
+            _analysisServices.AddService(typeof(IFileAnalyzerFactory), new AnsiFileWordCountAnalyzerFactory());
+        }
 
         /// <summary>
         /// Ordering call back for list view item with words statistics in it
@@ -36,33 +65,49 @@ namespace wfaWordCounter
         {
             switch (_sortColIdx)
             {
-                case 0: 
+                case WordColIdx: 
                     if(_sortDir == SortOrder.Ascending)
                         return string.Compare(leftWord.Text, rightWord.Text, StringComparison.CurrentCulture);
                     else
                         return string.Compare(rightWord.Text, leftWord.Text, StringComparison.CurrentCulture);
-                case 1:
-                    if (_sortDir == SortOrder.Ascending)
-                        return int.Parse(leftWord.SubItems[1].Text) - int.Parse(rightWord.SubItems[1].Text);
-                    else
-                        return int.Parse(rightWord.SubItems[1].Text) - int.Parse(leftWord.SubItems[1].Text);
+
+                case WordCountColIdx:
+                    if(!int.TryParse(leftWord.SubItems[WordCountColIdx].Text, out var leftWordCount))
+                        leftWordCount = 0;
+                    
+                    if(!int.TryParse(rightWord.SubItems[WordCountColIdx].Text, out var rightWordCount))
+                        rightWordCount = 0;
+
+                    return _sortDir == SortOrder.Ascending ? leftWordCount - rightWordCount : rightWordCount - leftWordCount;    
+                    
                 default: 
                     return 0;
             }
         }        
         
+        /// <summary>
+        /// Configure controls state depending on current analysis state
+        /// </summary>
+        /// <param name="analysisInProgress">Is analysis in progress</param>
         private void UpdateControls(bool analysisInProgress)
         {
+            //can't start new analysis if analisys in progress
             msiAnalyzeFile.Enabled = !analysisInProgress;
+
+            //can't exit app without stopping current analisys
             msiExitApp.Enabled = !analysisInProgress;
 
-            pbAnaysis.Visible = analysisInProgress;
-            pbAnaysis.Enabled = analysisInProgress;
+            //make progress bar and cancel analysis button visible if analisys in progress 
+            pbAnaysis.Visible = analysisInProgress;            
 
             btnCancelAnalysis.Visible = analysisInProgress;
             btnCancelAnalysis.Enabled = analysisInProgress;
         }
 
+        /// <summary>
+        /// Call back from analysis to show it's progress
+        /// </summary>
+        /// <param name="status"></param>
         private void OnAnalisysProgress(AnalysisStatus status)
         {
             //that mean's we need to setup progress bar
@@ -80,11 +125,12 @@ namespace wfaWordCounter
         }
 
         /// <summary>
-        /// Fill lvWordCount with provided statistics
+        /// Fill virtual cache for lvWordCount with provided statistics
         /// </summary>
         /// <param name="stat">Statistics from analyzed file</param>
         private void FillLVWord(IAnsiFileWordCountStatistics stat)
         {
+            //clear current virtual cache data
             _viewItemsCache.Clear();
             _viewItemsCache.Capacity = stat.Count;
 
@@ -101,8 +147,14 @@ namespace wfaWordCounter
                     _viewItemsCache.Add(lvItem);
                 }
 
+                //reset sort settings to values, according functional requirements
+                _sortColIdx = 1;
+                _sortDir = SortOrder.Descending;
+
+                //sort cache with actual settings
                 _viewItemsCache.Sort(CompareWordStats);
 
+                //fill lv from cache
                 lvWordCount.VirtualListSize = _viewItemsCache.Count;
             }
             finally
@@ -118,19 +170,27 @@ namespace wfaWordCounter
         {
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
+
             if(string.IsNullOrEmpty(openFileDialog.FileName)||(!File.Exists(openFileDialog.FileName)))
                 return;
 
             UpdateControls(true);
+            
+            //get factory for file analyzer from global registered services cache
+            if (_analysisServices.GetService(typeof(IFileAnalyzerFactory)) is not IFileAnalyzerFactory factory)
+                return;
 
-            var factory = new AnsiFileWordCountAnalyzerFactory();
             var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
+
             _ctsStopCurrentTask = new CancellationTokenSource();
             try
             {
-                if (await fileAnalyzer.AnalyzeAsync(_ctsStopCurrentTask.Token, new Progress<AnalysisStatus>(OnAnalisysProgress)) is not IAnsiFileWordCountStatistics stat)
+                //starting analysis
+                var analyzeTask = fileAnalyzer.AnalyzeAsync(_ctsStopCurrentTask.Token, new Progress<AnalysisStatus>(OnAnalisysProgress));
+                if (await analyzeTask is not IAnsiFileWordCountStatistics stat)
                     return;
 
+                //refilling with new data, only if succfully awaited it, otherwise, previous statistics still available in listview
                 FillLVWord(stat);
                 
                 lblAllWordCount.Text = $"All word Count: {stat.Count}";                
@@ -150,20 +210,26 @@ namespace wfaWordCounter
 
         private void lvWordCount_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
+            //filling lv item from virtual cache
             if (e.ItemIndex >= 0 && e.ItemIndex < _viewItemsCache.Count)
                 e.Item = _viewItemsCache[e.ItemIndex];
             else
                 e.Item = null;
         }
 
+        //sorting listview on column click
         private void lvWordCount_ColumnClick(object sender, ColumnClickEventArgs e)
         {
+            //reverse sort order if click's been done on the same column
             if (e.Column == _sortColIdx)
                 _sortDir = _sortDir == SortOrder.Ascending? SortOrder.Descending : SortOrder.Ascending;
-            else
-                _sortColIdx = _sortColIdx == 0 ? 1 : 0;
+            else//or just change sort column ids
+                _sortColIdx = _sortColIdx == WordColIdx ? WordCountColIdx : WordColIdx;
 
+            //reorder items in virtual cache 
             _viewItemsCache.Sort(CompareWordStats);
+
+            //then repaint listview
             lvWordCount.Refresh();
         }
 
@@ -197,7 +263,8 @@ namespace wfaWordCounter
         public WordCountStatView()
         {
             InitializeComponent();
-        }
+            InitServices();
+        }        
         #endregion
     }
 }
