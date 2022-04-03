@@ -9,6 +9,7 @@ wfaWordCounter.csproj - winForms main app
 FileStatistics.csproj - library with FileStatistics analyzers
 
 Usage: 
+
 	API folder - factories for creating IFileAnalyzers for perfoming different analysis
 
 	Interfaces folder - all common interfaces for all public APIs
