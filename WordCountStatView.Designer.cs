@@ -60,7 +60,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(703, 388);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(434, 538);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // lvWordCount
@@ -72,7 +72,7 @@
             this.lvWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvWordCount.Location = new System.Drawing.Point(3, 3);
             this.lvWordCount.Name = "lvWordCount";
-            this.lvWordCount.Size = new System.Drawing.Size(697, 352);
+            this.lvWordCount.Size = new System.Drawing.Size(428, 502);
             this.lvWordCount.TabIndex = 0;
             this.lvWordCount.UseCompatibleStateImageBehavior = false;
             this.lvWordCount.View = System.Windows.Forms.View.Details;
@@ -88,13 +88,13 @@
             // colWordCount
             // 
             this.colWordCount.Text = "Occurrence";
-            this.colWordCount.Width = 640;
+            this.colWordCount.Width = 274;
             // 
             // lblAllWordCount
             // 
             this.lblAllWordCount.AutoSize = true;
             this.lblAllWordCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAllWordCount.Location = new System.Drawing.Point(3, 358);
+            this.lblAllWordCount.Location = new System.Drawing.Point(3, 508);
             this.lblAllWordCount.Name = "lblAllWordCount";
             this.lblAllWordCount.Size = new System.Drawing.Size(144, 30);
             this.lblAllWordCount.TabIndex = 2;
@@ -104,16 +104,16 @@
             // pbAnaysis
             // 
             this.pbAnaysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbAnaysis.Location = new System.Drawing.Point(153, 361);
+            this.pbAnaysis.Location = new System.Drawing.Point(153, 511);
             this.pbAnaysis.Name = "pbAnaysis";
-            this.pbAnaysis.Size = new System.Drawing.Size(427, 24);
+            this.pbAnaysis.Size = new System.Drawing.Size(158, 24);
             this.pbAnaysis.TabIndex = 3;
             this.pbAnaysis.Visible = false;
             // 
             // btnCancelAnalysis
             // 
             this.btnCancelAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCancelAnalysis.Location = new System.Drawing.Point(586, 361);
+            this.btnCancelAnalysis.Location = new System.Drawing.Point(317, 511);
             this.btnCancelAnalysis.Name = "btnCancelAnalysis";
             this.btnCancelAnalysis.Size = new System.Drawing.Size(114, 24);
             this.btnCancelAnalysis.TabIndex = 4;
@@ -128,7 +128,7 @@
             this.fileToolStripMenuItem});
             this.msMainMenu.Location = new System.Drawing.Point(0, 0);
             this.msMainMenu.Name = "msMainMenu";
-            this.msMainMenu.Size = new System.Drawing.Size(703, 24);
+            this.msMainMenu.Size = new System.Drawing.Size(434, 24);
             this.msMainMenu.TabIndex = 3;
             this.msMainMenu.Text = "menuStrip1";
             // 
@@ -168,7 +168,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(703, 412);
+            this.ClientSize = new System.Drawing.Size(434, 562);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.msMainMenu);
             this.MainMenuStrip = this.msMainMenu;

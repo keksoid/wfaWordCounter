@@ -40,6 +40,8 @@ namespace wfaWordCounter
         private SortOrder _sortDir = SortOrder.Descending;
         #endregion
 
+        private const string FormCaption = "WordCounter";
+
         /// <summary>
         /// Token source to cancel current task
         /// </summary>
@@ -174,13 +176,15 @@ namespace wfaWordCounter
             if(string.IsNullOrEmpty(openFileDialog.FileName)||(!File.Exists(openFileDialog.FileName)))
                 return;
 
+            var fullFilePath = openFileDialog.FileName;
+
             UpdateControls(true);
             
             //get factory for file analyzer from global registered services cache
             if (_analysisServices.GetService(typeof(IFileAnalyzerFactory)) is not IFileAnalyzerFactory factory)
                 return;
 
-            var fileAnalyzer = factory.GetAnalyzer(openFileDialog.FileName);
+            var fileAnalyzer = factory.GetAnalyzer(fullFilePath);
 
             _ctsStopCurrentTask = new CancellationTokenSource();
             try
@@ -193,7 +197,9 @@ namespace wfaWordCounter
                 //refilling with new data, only if succfully awaited it, otherwise, previous statistics still available in listview
                 FillLVWord(stat);
                 
-                lblAllWordCount.Text = $"All word Count: {stat.Count}";                
+                lblAllWordCount.Text = $"All word Count: {stat.Count}";
+
+                this.Text = $"{FormCaption}: {Path.GetFileName(fullFilePath)}";
             }
             catch (OperationCanceledException)
             {
