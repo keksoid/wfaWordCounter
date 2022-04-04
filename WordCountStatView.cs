@@ -194,13 +194,14 @@ namespace wfaWordCounter
             try
             {
                 //starting analysis
-                var analyzeTask = fileAnalyzer.AnalyzeAsync(_ctsStopCurrentTask.Token, new Progress<AnalysisStatus>(OnAnalisysProgress));
+                var analyzeTask = fileAnalyzer.AnalyzeAsync(_ctsStopCurrentTask.Token,
+                    new Progress<AnalysisStatus>(OnAnalisysProgress));
                 if (await analyzeTask is not IAnsiFileWordCountStatistics stat)
                     return;
 
                 //refilling with new data, only if succfully awaited it, otherwise, previous statistics still available in listview
                 FillLVWord(stat);
-                
+
                 lblAllWordCount.Text = $"All word Count: {stat.Count}";
 
                 this.Text = $"{FormCaption}: {Path.GetFileName(fullFilePath)}";
@@ -208,6 +209,11 @@ namespace wfaWordCounter
             catch (OperationCanceledException)
             {
                 lblAllWordCount.Text = "Analysis was canceled";
+            }
+            catch (Exception ex)
+            {
+                var message = $"Exception occurred:\n{ex.Message}";
+                MessageBox.Show(message);
             }
             finally
             {
